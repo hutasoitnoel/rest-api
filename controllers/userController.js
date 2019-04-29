@@ -20,7 +20,7 @@ class UserController {
                 res.status(200).json(user)
             })
             .catch(err => {
-                res.status(500).json(err)
+                res.status(400).json('User not found')
             })
     }
 
@@ -40,33 +40,30 @@ class UserController {
     }
 
     static deleteOne(req, res) {
-        User.destroy({
-            where: { id: req.params.id }
-        })
+        User.findByPk(req.params.id)
+            .then(user => {
+                user.destroy()
+            })
             .then(deletedCount => {
                 res.status(200).json('delete success')
             })
             .catch(err => {
-                res.status(500).json(err)
+                res.status(400).json('User not found')
             })
     }
 
     static updateOne(req, res) {
         const { username, password } = req.body
         const hash = bcrypt.hashSync(password, salt)
-        User.update({
-            username: username,
-            password: hash
-        }, {
-                where: {
-                    id: req.params.id
-                }
+        User.findByPk(req.params.id)
+            .then(user => {
+                user.update({ username: username, password: hash })
             })
             .then(updated => {
-                res.status(200).json(updated)
+                res.status(200).json('Update succes')
             })
             .catch(err => {
-                res.status(500).json(err)
+                res.status(400).json('User not found')
             })
     }
 

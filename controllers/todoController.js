@@ -50,35 +50,31 @@ class TodoController {
 
     static updateOne(req, res) {
         const { title, description } = req.body
-        Todo.update({
-            title, description
-        },
-            {
-                where: { id: req.params.id }
+        Todo.findByPk(req.params.id)
+            .then(todo => {
+                todo.update({ title, description })
             })
             .then(todo => {
                 res.status(200).json(todo)
             })
             .catch(err => {
-                res.status(500).json(err)
+                res.status(400).json('Todo not found')
             })
     }
 
     static updateOnePut(req, res) {
         const { title, description } = req.body
-        if (!title || !description) res.status(500).json('Bad request')
+        if (!title || !description) res.status(400).json('Please fill title and description')
         else {
-            Todo.update({
-                title, description
-            },
-                {
-                    where: { id: req.params.id }
+            Todo.findByPk(req.params.id)
+                .then(todo => {
+                    todo.update({ title, description })
                 })
                 .then(todo => {
                     res.status(200).json(todo)
                 })
                 .catch(err => {
-                    res.status(500).json(err)
+                    res.status(400).json('Todo not found')
                 })
         }
     }
